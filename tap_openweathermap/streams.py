@@ -118,4 +118,22 @@ class ForecastWeatherStream(_ForcastWeatherStream):
     ).to_dict()
 
 
+class FreeForecastWeatherStream(_ForcastWeatherStream):
+    """Define custom stream."""
+    url_base = "https://api.openweathermap.org/data/2.5"
+    name = "free_forecast_stream"
+    path = "/forecast"
+    records_jsonpath = "$.list[*]"
 
+    schema = PropertiesList(
+        Property("synced_at", DateTimeType),
+        Property("dt", NumberType),
+        Property("main", CurrentWeatherMainObject),
+        Property("weather", WeatherObject),
+        Property("clouds", CurrentWeatherCloudsObject),
+        Property("wind", CurrentWeatherWindObject),
+        Property("visibility", NumberType),
+        Property("pop", NumberType),
+        Property("sys", CurrentWeatherSysObject),
+        Property("dt_txt", StringType)
+    ).to_dict()
