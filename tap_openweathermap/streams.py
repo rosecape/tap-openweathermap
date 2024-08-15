@@ -10,6 +10,9 @@ from singer_sdk.typing import (
     NumberType,
     StringType,
     DateTimeType,
+    ArrayType,
+    IntegerType,
+    ObjectType,
 )
 from singer_sdk.streams import RESTStream
 
@@ -28,6 +31,7 @@ from tap_openweathermap.schemas.current_weather import (
         CurrentWeatherRainObject,
         CurrentWeatherSysObject,
         CurrentWeatherWindObject,
+        CurrentWeatherSnowObject,
 )
 
 
@@ -88,6 +92,7 @@ class CurrentWeatherStream(_CurrentWeatherStream):
         Property("visibility", NumberType),
         Property("wind", CurrentWeatherWindObject),
         Property("rain", CurrentWeatherRainObject),
+        Property("snow", CurrentWeatherSnowObject),
         Property("clouds", CurrentWeatherCloudsObject),
         Property("dt", NumberType),
         Property("sys", CurrentWeatherSysObject),
@@ -123,17 +128,48 @@ class FreeForecastWeatherStream(_ForcastWeatherStream):
     url_base = "https://api.openweathermap.org/data/2.5"
     name = "free_forecast_stream"
     path = "/forecast"
-    records_jsonpath = "$.list[*]"
+    # records_jsonpath = "$.list[*]"
 
     schema = PropertiesList(
-        Property("synced_at", DateTimeType),
-        Property("dt", NumberType),
-        Property("main", CurrentWeatherMainObject),
-        Property("weather", WeatherObject),
-        Property("clouds", CurrentWeatherCloudsObject),
-        Property("wind", CurrentWeatherWindObject),
-        Property("visibility", NumberType),
-        Property("pop", NumberType),
-        Property("sys", CurrentWeatherSysObject),
-        Property("dt_txt", StringType)
+        Property("cod", NumberType),
+        Property("message", NumberType),
+        Property("cnt", NumberType),
+        Property("list", ArrayType(
+            PropertiesList(
+                Property("dt", NumberType),
+                Property("main", ObjectType(
+                        Property("temp", NumberType),
+                        Property("feels_like", NumberType),
+                        Property("temp_min", NumberType),
+                        Property("temp_max", NumberType),
+                        Property("pressure", NumberType),
+                        Property("sea_level", NumberType),
+                        Property("grnd_level", NumberType),
+                        Property("humidity", NumberType),
+                        Property("temp_kf", NumberType),
+                )),
+                Property("weather", WeatherObject),
+                Property("clouds", CurrentWeatherCloudsObject),
+                Property("wind", CurrentWeatherWindObject),
+                Property("rain", CurrentWeatherRainObject),
+                Property("snow", CurrentWeatherSnowObject),
+                Property("visibility", NumberType),
+                Property("pop", NumberType),
+                Property("sys", ObjectType(
+                    Property("pod", StringType)
+                )),
+                Property("dt_txt", StringType),
+            )
+        )),
+        Property("city", PropertiesList(
+            Property("id", NumberType),
+            Property("name", StringType),
+            Property("coord", CurrentWeatherCoordObject),
+            Property("country", StringType),
+            Property("population", NumberType),
+            Property("timezone", NumberType),
+            Property("sunrise", NumberType),
+            Property("sunset", NumberType),
+        )),
+        Property("synced_at", DateTimeType)
     ).to_dict()
