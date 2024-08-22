@@ -99,7 +99,7 @@ class CurrentWeatherStream(_CurrentWeatherStream):
         Property("timezone", NumberType),
         Property("id", NumberType),
         Property("name", StringType),
-        Property("cod", NumberType),
+        Property("cod", StringType),
         ).to_dict()
     
 
@@ -131,7 +131,7 @@ class FreeForecastWeatherStream(_ForcastWeatherStream):
     # records_jsonpath = "$.list[*]"
 
     schema = PropertiesList(
-        Property("cod", NumberType),
+        Property("cod", StringType),
         Property("message", NumberType),
         Property("cnt", NumberType),
         Property("list", ArrayType(
