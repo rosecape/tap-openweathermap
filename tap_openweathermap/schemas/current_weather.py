@@ -24,7 +24,9 @@ class CurrentWeatherMainObject(CustomObject):
         Property("temp_min", NumberType),
         Property("temp_max", NumberType),
         Property("pressure", NumberType),
-        Property("humidity", NumberType)
+        Property("humidity", NumberType),
+        Property("sea_level", NumberType),
+        Property("grnd_level", NumberType),
     )
 
 
@@ -40,7 +42,15 @@ class CurrentWeatherWindObject(CustomObject):
 class CurrentWeatherRainObject(CustomObject):
 
     properties = PropertiesList(
-        Property("1h", NumberType)
+        Property("1h", NumberType),
+        Property("3h", NumberType)
+    )
+
+class CurrentWeatherSnowObject(CustomObject):
+
+    properties = PropertiesList(
+        Property("1h", NumberType),
+        Property("3h", NumberType)
     )
 
 
